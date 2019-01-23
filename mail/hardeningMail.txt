@@ -1,0 +1,185 @@
+step 2: DNS - add MX entry
+echo "           MX      10 mail.nidmauvilech.ch. " >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo "           IN TXT  \"v=spf1 mx a ~all\" >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo "mail IN A 104.248.137.212" >>  /etc/nsd/zones/nidmauvilech.ch.forward
+nsd-control reload nidmauvilech.ch
+
+step 3: install postfix
+DEBIAN_FRONTEND=noninteractive apt-get install postfix -y
+apt-get install mailutils -y 
+step 4: std conf: 
+std conf:
+
+
+alias: /etc/aliases
+newaliases
+canonical: /etc/postfix/canonical
+postmap canonical
+
+systemctl restart postfix
+
+-------------------
+step 5: TLS
+
+apt-get install letsencrypt -y
+letsencrypt certonly --standalone -d mail.nidmauvilech.ch
+give email , give a A and a (Y/N)
+
+postconf -e '#START TLS Config'
+postconf -e 'smtpd_use_tls = yes'
+postconf -e 'smtpd_tls_cert_file = /etc/letsencrypt/live/mail.nidmauvilech.ch/fullchain.pem'
+postconf -e 'smtpd_tls_key_file = /etc/letsencrypt/live/mail.nidmauvilech.ch/privkey.pem'
+postconf -e 'smtp_tls_security_level = may'
+postconf -e 'smtp_tls_note_starttls_offer = yes'
+postconf -e 'smtp_tls_loglevel = 1'
+postconf -e 'smtp_tls_session_cache_database = btree:/var/lib/postfix/smtp_tls_session_cache'
+echo "###https://access.redhat.com/articles/1468593" >> /etc/postfix/main.cf
+postconf -e 'smtpd_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1'
+postconf -e 'smtpd_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1'
+postconf -e 'smtp_tls_mandatory_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1'
+postconf -e 'smtp_tls_protocols = !SSLv2, !SSLv3, !TLSv1, !TLSv1.1'
+postconf -e 'smtp_tls_exclude_ciphers = EXP, MEDIUM, LOW, DES, 3DES, SSLv2'
+postconf -e 'smtpd_tls_exclude_ciphers = EXP, MEDIUM, LOW, DES, 3DES, SSLv2'
+postconf -e 'tls_high_cipherlist = kEECDH:+kEECDH+SHA:kEDH:+kEDH+SHA:+kEDH+CAMELLIA:kECDH:+kECDH+SHA:kRSA:+kRSA+SHA:+kRSA+CAMELLIA:!aNULL:!eNULL:!SSLv2:!RC4:!MD5:!DES:!EXP:!SEED:!IDEA:!3DES:!SHA'
+postconf -e 'tls_preempt_cipherlist      = yes'
+postconf -e 'smtp_tls_ciphers = high'
+postconf -e 'smtpd_tls_ciphers = high'
+
+postconf -e '#END TLS Config'
+systemctl restart postfix
+
+step 6: SPF
+
+apt-get install opendkim opendkim-tools postfix-policyd-spf-python postfix-pcre
+adduser postfix opendkim
+echo "local-data: '  nidmauvilech.ch. IN TXT  \"v=spf1 mx a ~all\"'" >> /etc/unbound/unbound.conf.d/local.conf
+echo "policyd-spf  unix  -       n       n       -       0       spawn
+    user=policyd-spf argv=/usr/bin/policyd-spf"  >> /etc/postfix/master.cf
+postconf -e 'policyd-spf_time_limit = 3600'
+postconf -e 'smtpd_recipient_restrictions = permit_mynetworks, permit_sasl_authenticated, reject_unauth_destination, check_policy_service unix:private/policyd-spf'
+
+cat /etc/opendkim.conf
+ # This is a basic configuration that can easily be adapted to suit a standard
+ # installation. For more advanced options, see opendkim.conf(5) and/or
+ # /usr/share/doc/opendkim/examples/opendkim.conf.sample.
+
+ # Log to syslog
+ Syslog          yes
+ # Required to use local socket with MTAs that access the socket as a non-
+ # privileged user (e.g. Postfix)
+ UMask           002
+ # OpenDKIM user
+ # Remember to add user postfix to group opendkim
+ UserID          opendkim
+
+ # Map domains in From addresses to keys used to sign messages
+ KeyTable        /etc/opendkim/key.table
+ SigningTable        refile:/etc/opendkim/signing.table
+
+ # Hosts to ignore when verifying signatures
+ ExternalIgnoreList  /etc/opendkim/trusted.hosts
+ InternalHosts       /etc/opendkim/trusted.hosts
+
+ # Commonly-used options; the commented-out versions show the defaults.
+ Canonicalization    relaxed/simple
+ Mode            sv
+ SubDomains      no
+ #ADSPAction     continue
+ AutoRestart     no
+ AutoRestartRate     10/1M
+ Background      yes
+ DNSTimeout      5
+ SignatureAlgorithm  rsa-sha256
+
+ # Always oversign From (sign using actual From and a null From to prevent
+ # malicious signatures header fields (From and/or others) between the signer
+ # and the verifier.  From is oversigned by default in the Debian package
+ # because it is often the identity key used by reputation systems and thus
+ # somewhat security sensitive.
+ OversignHeaders     From
+###UBUNTU 18.10
+PidFile               /var/spool/postfix/opendkim/opendkim.pid
+Socket          local:/var/spool/postfix/opendkim/opendkim.sock
+------
+chmod u=rw,go=r /etc/opendkim.conf
+mkdir /etc/opendkim
+mkdir /etc/opendkim/keys
+chown -R opendkim:opendkim /etc/opendkim
+chmod go-rw /etc/opendkim/keys
+echo "*@nidmauvilech.ch nidmauvilech" > /etc/opendkim/signing.table
+echo "nidmauvilech nidmauvilech.ch:201812:/etc/opendkim/keys/nidmauvilech.private" > /etc/opendkim/key.table
+echo "127.0.0.1
+::1
+localhost
+nidmauvilech.ch
+mail.nidmauvilech.ch" > /etc/opendkim/trusted.hosts
+
+chown -R opendkim:opendkim /etc/opendkim
+chmod -R go-rwx /etc/opendkim/keys
+
+opendkim-genkey -b 2048 -h rsa-sha256 -r -s 201812 -d nidmauvilech.ch -v
+ mv 201812.private nidmauvilech.private
+ mv 201812.txt nidmauvilech.txt
+ mv nidmauvilech.* /etc/opendkim/keys/
+
+chown -R opendkim:opendkim /etc/opendkim
+chmod -R go-rw /etc/opendkim/keys
+
+mkdir /var/spool/postfix/opendkim
+chown opendkim:postfix /var/spool/postfix/opendkim
+
+ sed -i '/PIDFile/d' /lib/systemd/system/opendkim.service
+systemctl daemon-reload
+
+DNS Entry: 
+keypart1=`cat /etc/opendkim/keys/nidmauvilech.txt | awk -F "\"" '{ print $2}' | grep "p=" | cut -c1-100`
+keypart2=`cat /etc/opendkim/keys/nidmauvilech.txt | awk -F "\"" '{ print $2}' | grep "p=" | cut -c101-1000`
+keypart3=`cat /etc/opendkim/keys/nidmauvilech.txt | awk -F "\"" '{ print $2}' | grep "p=" -A2 | tail -n1`
+echo "201812._domainkey       IN      TXT     (" >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo "\"v=DKIM1\059 h=sha256\059 k=rsa\059 s=email\059 ${keypart1}\"" >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo "\"$keypart2\"" >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo "\"$keypart3\" )" >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo "_adsp._domainkey       IN TXT \"dkim=all\"" >> /etc/nsd/zones/nidmauvilech.ch.forward
+#echo "local-data: \"201812._domainkey.nidmauvilech.ch IN TXT v=DKIM1\; h=sha256\; k=rsa\; s=email\; $keypart1 $keypart2\"" >> /etc/unbound/unbound.conf.d/local.conf
+#echo "local-data: \"_adsp._domainkey.nidmauvilech.ch IN TXT dkim=all\"" >> /etc/unbound/unbound.conf.d/local.conf
+
+--> main.cf entry with dmarc
+----------dmarc
+
+sudo apt-get install opendmarc
+
+cat /etc/opendmarc.conf
+AutoRestart Yes
+AutoRestartRate 10/1h
+PidFile /var/spool/postfix/opendmarc/opendmarc.pid
+Socket local:/var/spool/postfix/opendmarc/opendmarc.sock
+AuthservID mail.nidmauvilech.ch
+TrustedAuthservIDs mail1.nidmauvilech.ch
+Syslog true
+SyslogFacility mail
+UMask 0002
+UserID opendmarc:opendmarc
+
+mkdir /var/spool/postfix/opendmarc
+chown opendmarc:opendmarc /var/spool/postfix/opendmarc
+sed -i '/PIDFile/d' /lib/systemd/system/opendmarc.service
+systemctl daemon-reload
+usermod -G opendkim,opendmarc postfix
+---DNS
+#echo "local-data: \"_dmarc.nidmauvilech.ch IN TXT v=DMARC1\; p=quarantine\; sp=quarantine\; adkim=r\; aspf=r\; fo=1\; rf=afrf\; rua=mailto:postmaster@nidmauvilech.ch\"" >> /etc/unbound/unbound.conf.d/local.conf
+echo "_dmarc IN TXT \"v=DMARC1\059 p=quarantine\059 sp=quarantine\059 adkim=r\059 aspf=r\059 fo=1\059 rf=afrf\059 rua=mailto:postmaster@nidmauvilech.ch\"" >> /etc/nsd/zones/nidmauvilech.ch.forward
+echo '#START OpendKIM & OpenDMARC' >> /etc/postfix/main.cf
+postconf -e 'milter_protocol = 6'
+postconf -e 'milter_default_action = accept'
+postconf -e 'smtpd_milters = local:/opendkim/opendkim.sock, local:/opendmarc/opendmarc.sock'
+postconf -e 'non_smtpd_milters = local:/opendkim/opendkim.sock, local:/opendmarc/opendmarc.sock'
+echo '#END OpendKIM & OpenDMARC' >> /etc/postfix/main.cf
+
+
+
+nsd-control reload nidmauvilech.ch
+systemctl restart nsd
+systemctl restart opendkim
+systemctl restart opendmarc
+systemctl restart postfix
+
