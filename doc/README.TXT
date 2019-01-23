@@ -36,8 +36,8 @@ Fridolin Zurlinden: https://github.com/ifrido
 Jan Henzi: https://github.com/henzij
 Ismael Riedo: https://github.com/riedoi
 
-https://github.com/ifrido/BTI7301/releases/download/1.0/v1.0.zip
+https://github.com/SSSHS/script/archive/1.0.tar.gz
 
 For mor Information please check:
-/doc/report.pdf
-/doc/slides.pdf
+doc/manual.pdf
+doc/slides.pdf

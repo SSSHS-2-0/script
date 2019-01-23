@@ -6,7 +6,7 @@ The whole process is guided so it needs minimal information to set up your envir
 
 ## Requirements
 You need:
-* A linux server (Ubuntu 18.06x64 is currently supported)
+* A linux server (Ubuntu 18.04x64 is currently supported)
 * Your own domain
 * Minimal linux knowledge
 
@@ -14,15 +14,15 @@ You need:
 This shows you how to run this script on your server:
 ```
 # Download and run the project
-curl -Ls https://github.com/ifrido/BTI7301/releases/download/1.0/v1.0.tgz | tar xz && cd v1.0/src/ && ./setup.sh
+curl -Ls https://github.com/SSSHS/script/archive/1.0.tar.gz | tar xz && cd script-1.0 && ./setup.sh
 ```
 If you want to download the project and run it later on:
 ```
 # Download the project
-curl -Ls https://github.com/ifrido/BTI7301/releases/download/1.0/v1.0.tgz | tar xz
+curl -Ls https://github.com/SSSHS/script/archive/1.0.tar.gz | tar xz
 ```
 If you downloaded the project and want to run it:
 ```
 # Run the project
-cd v1.0/src/ && ./v1.0/src/setup.sh
+cd script-1.0 && ./setup.sh
 ```
