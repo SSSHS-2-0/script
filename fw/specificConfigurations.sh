@@ -53,6 +53,8 @@ while read line; do
 		port=$(echo $line | cut -d '-' -f3 | tr -d '[:space:]')
 		${LOGGING} -i "Working on '$activation $port/$protocol'."
 		ufw $activation $port/$protocol > /dev/null 2>&1
+	else
+		echo $line;
 	fi
 done < ${FW_CONF}
 ${LOGGING} -i "Done Specific configurations."
