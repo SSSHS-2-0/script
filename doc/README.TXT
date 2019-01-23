@@ -39,5 +39,5 @@ Ismael Riedo: https://github.com/riedoi
 https://github.com/SSSHS/script/archive/1.0.tar.gz
 
 For mor Information please check:
-doc/report.pdf
+doc/manual.pdf
 doc/slides.pdf
