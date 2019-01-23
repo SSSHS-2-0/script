@@ -6,7 +6,7 @@ The whole process is guided so it needs minimal information to set up your envir
 
 ## Requirements
 You need:
-* A linux server (Ubuntu 18.06x64 is currently supported)
+* A linux server (Ubuntu 18.04x64 is currently supported)
 * Your own domain
 * Minimal linux knowledge
 
