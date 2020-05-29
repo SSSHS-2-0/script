@@ -1,0 +1,3 @@
+We start with the authoritative Name Server: NSD
+CAUTION you need your own domain - IF NOT the server won't be functional
+DO NOT use a domain which does not belong to you, it may be illegal

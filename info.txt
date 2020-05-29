@@ -1,0 +1,6 @@
+Welcome to the setup.
+
+1. Create all users you need
+2. Install all modules you want to use
+
+You can come back anytime and change your configuration
