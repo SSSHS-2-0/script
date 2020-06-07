@@ -100,6 +100,7 @@ do
     if ! test -f "$FILE"; 
     then
         requirements_fullfiled=1
+        conflict_found=0
         while read -r line
         do 
             FILE="$SCRIPT_SOURCE_DIR/$line/installed"
@@ -108,8 +109,19 @@ do
                 requirements_fullfiled=0
             fi
         done< <(cat ${!FILEVAR}/requirements)
+
+        while read -r line
+        do 
+            FILE="$SCRIPT_SOURCE_DIR/$line/installed"
+            if test -f "$FILE"; 
+            then 
+                conflict_found=1
+                break
+            fi
+        done< <(cat ${!FILEVAR}/conflict)
+
         ((count++))
-        if (( requirements_fullfiled == 1 )); then dialog+=" $c \"$prefix$c\" off"; fi
+        if (( requirements_fullfiled == 1 && conflict_found == 0)); then dialog+=" $c \"$prefix$c\" off"; fi
     fi
 done
 dialog+=' 2>&1 1>&3'
