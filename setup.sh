@@ -26,7 +26,7 @@ fi
 
 #Defines global vars
 export SCRIPT_SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
-export DIALOGRC="$SCRIPT_SOURCE_DIR/dialog.conf"
+#export DIALOGRC="$SCRIPT_SOURCE_DIR/dialog.conf"
 export BACKTITLE="Server Hardening"
 export UTILS=${SCRIPT_SOURCE_DIR}/helpers
 export DOMAINLIST="$SCRIPT_SOURCE_DIR/domains.list"
@@ -98,9 +98,18 @@ do
     FILEVAR="_$c"
     FILE="${!FILEVAR}/installed"
     if ! test -f "$FILE"; 
-    then 
+    then
+        requirements_fullfiled=1
+        while read -r line
+        do 
+            FILE="$SCRIPT_SOURCE_DIR/$line/installed"
+            if ! test -f "$FILE"; 
+            then 
+                requirements_fullfiled=0
+            fi
+        done< <(cat ${!FILEVAR}/requirements)
         ((count++))
-        dialog+=" $c \"$prefix$c\" off"
+        if (( requirements_fullfiled == 1 )); then dialog+=" $c \"$prefix$c\" off"; fi
     fi
 done
 dialog+=' 2>&1 1>&3'
@@ -237,4 +246,4 @@ load_modules
 menu
 
 #Clear the terminal at the end
-clear
+#clear
