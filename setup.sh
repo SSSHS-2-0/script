@@ -27,7 +27,7 @@ fi
 #Defines global vars
 export SCRIPT_SOURCE_DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null && pwd )"
 #export DIALOGRC="$SCRIPT_SOURCE_DIR/dialog.conf"
-export BACKTITLE="Server Hardening"
+export BACKTITLE="Server Set-Up & Security-Hardening Script 2.0"
 export UTILS=${SCRIPT_SOURCE_DIR}/helpers
 export DOMAINLIST="$SCRIPT_SOURCE_DIR/domains.list"
 export PWLIST="$SCRIPT_SOURCE_DIR/generated_passwords"
@@ -45,7 +45,7 @@ export SELECT_MESSAGE=""
 prefix='$_'
 
 #Check for packages
-command -v dialog >/dev/null 2>&1 || { echo >&2 "I require dialog but it's not installed.  Aborting."; exit 1; }
+command -v dialog >/dev/null 2>&1 || { apt install dialog -y; }
 $CHECK_PACKAGE "docker.io"
 $CHECK_PACKAGE "docker-compose"
 $CHECK_PACKAGE "openssl"
