@@ -29,9 +29,9 @@ Contact Information:
 
 Students:
 
-* Samuel Imboden
-* Anna Albrecht
+* Samuel Imboden:  imboden.samuel@protonmail.ch
+* Anna Albrecht: ak.albrecht@protonmail.ch
 
 Project Supervisor:
 
- * Simon Kramer
+ * Simon Kramer: https://www.simon-kramer.ch/
