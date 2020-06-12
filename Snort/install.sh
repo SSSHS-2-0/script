@@ -16,7 +16,7 @@ else
        exit 0
 fi
 
-dialog --backtitle "$BACKTITLE" --colors --cr-wrap --msgbox "Ready to install snort, you selected \n\n\Zb\Z1$interface\Zn\n\nenter this in the install progress.\nDon't trust snort if it tells you the interface is wrong.\nUse \n\n\Zb\Z1$($UTILS/getIpv4.sh)/32\Zn\n\nas Network range" 0 0
+dialog --backtitle "$BACKTITLE" --colors --cr-wrap --msgbox "Ready to install snort, you selected \n\n\Zb\Z1$interface\Zn\n\nenter this in the install progress.\nMaybe snort tells you the interface is wrong, ignore that.\nUse \n\n\Zb\Z1$($UTILS/getIpv4.sh)/32\Zn\n\nas Network range.\n write this down because you will need it shortly" 0 0
 
 # install snort without the gui
 
