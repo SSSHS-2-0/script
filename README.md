@@ -30,7 +30,7 @@ Contact Information:
 Students:
 
 * Samuel Imboden:  imboden.samuel@protonmail.ch
-* Anna Albrecht: ak.albrecht@protonmail.ch  [LinkedIn](https://www.linkedin.com/in/anna-albrecht-3452b01b0/)
+* Anna Albrecht: ak.albrecht@protonmail.ch - [LinkedIn](https://www.linkedin.com/in/anna-albrecht-3452b01b0/)
 
 Project Supervisor:
 
