@@ -6,22 +6,17 @@ This is a follow-up project to the SSSHS 1.0 found here: https://github.com/SSSH
 
 ## Requirements
 You need:
-* A linux server with Ubuntu-Server 20.04x64 running
-* Your own domain(s) and already configured to the extern IP Address of the server
+* A linux server with Ubuntu-Server 20.04x64 running (you can get a  a virtual private server (VPS) from https://us.ovhcloud.com or from any other provider such as Amazon)
+* Your own domain(s) and already configured to the extern IP Address of the server (This can usually be done on the website of your domain provider)
 * Minimal linux knowledge
 
 ## Instructions
 This shows you how to run this script on your server:
 ```
-# Download and run the project
-curl -Ls https://github.com/SSSHS-2-0/script/archive/v2.1.tar.gz | tar xz && cd script && ./setup.sh
+# Clone the repository:
+git clone https://github.com/SSSHS-2-0/ script.git
 ```
-If you want to download the project and run it later on:
-```
-# Download the project
-curl -Ls https://github.com/SSSHS-2-0/script/archive/v2.1.tar.gz | tar xz
-```
-If you downloaded the project and want to run it:
+If you cloned the project got to the script folder and run it:
 ```
 # Run the project as root user in the main direcoty of this repository
 ./setup.sh
