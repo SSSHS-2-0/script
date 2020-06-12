@@ -74,22 +74,20 @@ EOF
 # --- MAIN ---
 
 if [ "$1" -eq 1 ] ; then
- dialog --backtitle "$BACKTITLE" --msgbox "Server will listen with localhost on port 53" 0 0
+ dialog --backtitle "$BACKTITLE" --msgbox "DNS will listen with localhost on port 53" 0 0
  doIpv6="yes"
  only_localhost
 else
  ipv4=$2
- #ipv6=$3
- #bug with ipv6
- ipv6=
+ ipv6=$3
 if [ -z "$ipv6" ] ; then
         ipv6entry="#interface: ${ipv6}"
 	doIpv6="no"
-   dialog --backtitle "$BACKTITLE" --msgbox "Server will listen with $ipv4 (and $ipv6 ) on port 53" 0 0
+   dialog --backtitle "$BACKTITLE" --msgbox "DNS will listen with $ipv4 (and $ipv6 ) on port 53" 0 0
 else
         ipv6entry="interface: ${ipv6}"
 	doIpv6="yes"
-   dialog --backtitle "$BACKTITLE" --msgbox "Server will listen with $ipv4 (and $ipv6 ) on port 53" 0 0
+   dialog --backtitle "$BACKTITLE" --msgbox "DNS will listen with $ipv4 (and $ipv6 ) on port 53" 0 0
 fi
 
  not_localhost

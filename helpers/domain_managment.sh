@@ -25,7 +25,7 @@ function domain_managment {
     exec 3>&1;
     result=$(dialog --backtitle "$BACKTITLE" \
         --cancel-label "Continue witout saving" \
-        --title "Domain Managment" \
+        --title "Domain Managment - $modulename" \
         --menu "" 0 0 0 \
         "1" "Display Domains" \
         "2" "Add Domain" \
@@ -103,5 +103,5 @@ function rem_domain {
         fi
     fi
 }
-
+modulename=$1
 domain_managment

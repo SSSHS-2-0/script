@@ -22,8 +22,8 @@ FW_CONF="$( cd "$( dirname "${BASH_SOURCE[0]}" )" >/dev/null 2>&1 && pwd )"/fw.c
 #
 
 function _reset {
-	ufw reset --force > /dev/null 2>&1
-	ufw enable > /dev/null 2>&1
+	ufw --force reset  > /dev/null 2>&1
+	ufw --force enable > /dev/null 2>&1
 	ufw default deny incoming > /dev/null 2>&1
 	ufw default allow outgoing > /dev/null 2>&1
 }

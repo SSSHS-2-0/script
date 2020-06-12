@@ -13,5 +13,8 @@ function gen_pw {
 
 module_name=$1
 gen_pw
+
+chmod 600 $PWLIST
 echo "$module_name:$password" >> $PWLIST
+chmod 400 $PWLIST
 echo $password

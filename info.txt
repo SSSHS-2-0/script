@@ -4,3 +4,5 @@ Welcome to the setup.
 2. Install all modules you want to use
 
 You can come back anytime and change your configuration
+
+If stuck: CTRL+C for canceling action.

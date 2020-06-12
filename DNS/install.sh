@@ -52,7 +52,7 @@ function domain_info {
 # get's domain name from user
 #
 function get_domain_name {
-    $UTILS/domain_managment.sh
+    $UTILS/domain_managment.sh "DNS"
 	if [[ ! -s $DOMAINLIST ]]
 	then
 		dialog --msgbox "You need your own domain... exiting" 0 0

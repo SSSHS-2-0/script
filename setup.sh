@@ -6,7 +6,26 @@
 #	Main script for the user interface.
 #
 #========================================================
-
+#   The MIT License (MIT)
+#   Copyright © 2020 Berner Fachhochschule
+#
+#   Permission is hereby granted, free of charge, to any person obtaining a copy 
+#   of this software and associated documentation files (the “Software”), to deal 
+#   in the Software without restriction, including without limitation the rights to 
+#   use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of 
+#   the Software, and to permit persons to whom the Software is furnished to do so,
+#   subject to the following conditions:
+#
+#   The above copyright notice and this permission notice shall be included in all 
+#   copies or substantial portions of the Software.
+#
+#   THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED,
+#   INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A 
+#   PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT 
+#   HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION 
+#   OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE 
+#   SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+#========================================================
 
 #Check for root
 if [[ $EUID -ne 0 ]]; then
@@ -188,7 +207,7 @@ function update_fw {
     #check if firwall module is installed
     if test -f "$SCRIPT_SOURCE_DIR/Firewall/installed"; then
         FW_CONF="$SCRIPT_SOURCE_DIR/Firewall/fw.conf"
-        dialog --backtitle "$BACKTITLE"  --infobox "Updating Firwall rules..." 0 0
+        dialog --backtitle "$BACKTITLE"  --infobox "Updating Firewall rules..." 0 0
         echo "" > $FW_CONF
         for (( c=1; c<=$module_count; c++ ))
         do
@@ -204,8 +223,6 @@ function update_fw {
         done
     
         $SCRIPT_SOURCE_DIR/Firewall/specificConfigurations.sh
-    else
-        dialog --backtitle "$BACKTITLE" --msgbox "Firewall is not installed" 0 0
     fi
 }
 
@@ -219,8 +236,7 @@ result=$(dialog --backtitle "$BACKTITLE" \
     "1" "User Managment" \
     "2" "Install Modules" \
     "3" "Remove Modules"\
-    "4" "Update Docker" \
-    "5" "Update Firewall" 2>&1 1>&3);
+    "4" "Update Docker" 2>&1 1>&3);
 exitcode=$?;
 exec 3>&-;
 
@@ -242,20 +258,18 @@ then
     "4")
     dialog --prgbox "Running docker skript..." ./docker.sh 1000 1000
     ;;
-
-    "5")
-    update_fw
-    ;;
     esac
     #Start Menu again
     menu
 fi
-
+SCRIPT_SOURCE_DIR
 }
 
 #Start Menu
 load_modules
 menu
+update_fw
+dialog --backtitle "$BACKTITLE"  --cr-wrap --msgbox "All generated passwords are stored in $SCRIPT_SOURCE_DIR/generated_passwords.\nBe sure to copy this file to a safe place and delete it." 0 0
 
 #Clear the terminal at the end
-#clear
+clear

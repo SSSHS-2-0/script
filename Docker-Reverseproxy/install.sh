@@ -12,7 +12,7 @@
 
 modulename="Reverseproxy"
 #let user add domains
-$UTILS/domain_managment.sh
+$UTILS/domain_managment.sh $modulename
 mkdir -p /srv/docker-reverseproxy/conf.d
 mkdir -p /srv/docker-reverseproxy/certs
 $LOGGING -i "Installed module $modulename"
