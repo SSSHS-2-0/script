@@ -12,6 +12,11 @@ You need:
 ## Instructions
 This shows you how to run this script on your server:
 ```
+# Connect to your server via SSH:
+ssh root@yourservername
+```
+IMPORTANT: Make sure to create another user than the root when running the script for the first time, as the SSH hardening will prevent you from connecting to the server as root user in the future.
+```
 # Clone the repository:
 git clone https://github.com/SSSHS-2-0/ script.git
 ```
